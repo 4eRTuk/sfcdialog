@@ -10,7 +10,9 @@ There are 3 callbacks:
 * onCancel(): user clicks Cancel. void
 
 ####Manifest:
+```xml
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+```
 
 ####Usage:
 As well as any other DialogFragment:

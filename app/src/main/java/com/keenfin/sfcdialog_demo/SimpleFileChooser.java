@@ -3,11 +3,7 @@
 //    (See accompanying file LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 */
-package com.keenfin.sfcdialog;
-
-/**
- * Created by 4eRT on 04.01.2015.
- */
+package com.keenfin.sfcdialog_demo;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -33,9 +29,9 @@ public class SimpleFileChooser extends DialogFragment implements android.content
     private boolean showHidden = true;
 
     public interface SimpleFileChooserListener {
-        public void onFileChosen(File file);
-        public void onDirectoryChosen(File directory);
-        public void onCancel();
+        void onFileChosen(File file);
+        void onDirectoryChosen(File directory);
+        void onCancel();
     }
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -48,7 +44,7 @@ public class SimpleFileChooser extends DialogFragment implements android.content
         }
 
         dirs = getFilesInDirectory(rootPath);
-        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_single_choice, dirs);
+        adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_single_choice, dirs);
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setSingleChoiceItems(adapter, -1, this).setPositiveButton(android.R.string.ok, this).setNegativeButton(android.R.string.cancel, this).setTitle(getDirectoryName());
@@ -128,7 +124,7 @@ public class SimpleFileChooser extends DialogFragment implements android.content
 
     // gets all files ascending in current directory
     private ArrayList<String> getFilesInDirectory(String dir) {
-        ArrayList<String> dirs = new ArrayList<String>();
+        ArrayList<String> dirs = new ArrayList<>();
 
         try {
             File currentDir = new File(dir);

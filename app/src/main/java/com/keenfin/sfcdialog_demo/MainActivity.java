@@ -3,7 +3,7 @@
 //    (See accompanying file LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 */
-package com.keenfin.sfcdialog;
+package com.keenfin.sfcdialog_demo;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;

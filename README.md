@@ -1,7 +1,7 @@
 Simple File/Directory Chooser for Android
 ==========
 ####Description:
-It's based on dialog fragment so min api is 11+ by default. All styles are like current system theme too.
+It's based on dialog fragment so min api is 11+ by default. All styles are like current system theme.
 
 There are 3 callbacks:
 
@@ -15,7 +15,12 @@ There are 3 callbacks:
 ```
 
 ####Usage:
-As well as any other DialogFragment:
+Now available at jcenter! As soon as Maven Central will approve my account I'll add it there too.
+```
+    compile 'com.4ert.sfcdialog:sfcdialog:0.1'
+```
+
+Like any other DialogFragment:
 ```java
 SimpleFileChooser sfcDialog = new SimpleFileChooser();
 

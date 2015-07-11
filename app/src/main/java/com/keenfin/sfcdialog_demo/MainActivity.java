@@ -5,14 +5,16 @@
 */
 package com.keenfin.sfcdialog_demo;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
+import com.nextgis.sfcdialog.SimpleFileChooser;
+
 import java.io.File;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends AppCompatActivity {
     TextView tv;
 
     @Override

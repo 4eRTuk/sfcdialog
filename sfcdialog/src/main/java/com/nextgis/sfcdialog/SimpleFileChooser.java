@@ -3,7 +3,7 @@
 //    (See accompanying file LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 */
-package com.keenfin.sfcdialog_demo;
+package com.nextgis.sfcdialog;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

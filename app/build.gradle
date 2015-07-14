@@ -22,5 +22,6 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:22.2.0'
-    compile 'com.4ert.sfcdialog:sfcdialog:0.1'
+    compile 'com.4ert:sfcdialog:0.1.1'
+//    compile project(':sfcdialog')
 }

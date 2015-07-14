@@ -10,7 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
-import com.nextgis.sfcdialog.SimpleFileChooser;
+import com.keenfin.sfcdialog.SimpleFileChooser;
 
 import java.io.File;
 
@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
                 });
 
                 sfcDialog.setShowHidden(false);
-                sfcDialog.setRootPath("/");
                 sfcDialog.show(getFragmentManager(), "SimpleFileChooserDialog");
             }
         });

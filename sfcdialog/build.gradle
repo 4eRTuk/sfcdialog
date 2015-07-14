@@ -1,10 +1,17 @@
+/*
+ *           Copyright © 2015 Stanislav Petriakov
+ *  Distributed under the Boost Software License, Version 1.0.
+ *     (See accompanying file LICENSE_1_0.txt or copy at
+ *           http://www.boost.org/LICENSE_1_0.txt)
+ */
+
 apply plugin: 'com.android.library'
 
 ext {
     bintrayRepo = 'maven'
     bintrayName = 'sfc-dialog'
 
-    publishedGroupId = 'com.4ert.sfcdialog'
+    publishedGroupId = 'com.4ert'
     libraryName = 'SFC Dialog'
     artifact = 'sfcdialog'
 
@@ -13,7 +20,7 @@ ext {
     siteUrl = 'https://github.com/4eRTuk/sfcdialog'
     gitUrl = 'https://github.com/4eRTuk/sfcdialog.git'
 
-    libraryVersion = '0.1'
+    libraryVersion = '0.1.1'
 
     developerId = '4ert'
     developerName = 'Stanislav Petriakov'
@@ -31,8 +38,8 @@ android {
     defaultConfig {
         minSdkVersion 11
         targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "0.1.1"
     }
     buildTypes {
         release {

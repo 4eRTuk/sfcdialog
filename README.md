@@ -9,19 +9,17 @@ There are 3 callbacks:
 * onDirectoryChosen(File directory): user clicks OK and file is not chosen. directory = current directory
 * onCancel(): user clicks Cancel. void
 
-####Manifest:
-```xml
-<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-```
-
 ####Usage:
-Now available at jcenter! As soon as Maven Central will approve my account I'll add it there too.
+Now available at jCenter and Maven Central! Just add line to build.gradle:
 ```
-    compile 'com.4ert.sfcdialog:sfcdialog:0.1'
+dependencies {
+    ...
+    compile 'com.4ert:sfcdialog:0.1.1'
+}
 ```
 
 Like any other DialogFragment:
-```java
+```
 SimpleFileChooser sfcDialog = new SimpleFileChooser();
 
 sfcDialog.setOnChosenListener(new SimpleFileChooser.SimpleFileChooserListener() {

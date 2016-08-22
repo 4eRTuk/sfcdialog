@@ -1,18 +1,26 @@
-/*          Copyright © 2015 Stanislav Petriakov
+/*          Copyright © 2015-2016 Stanislav Petriakov
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 */
 package com.keenfin.sfcdialog;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,12 +29,14 @@ import java.util.Collections;
 import java.util.Comparator;
 
 public class SimpleFileChooser extends DialogFragment implements android.content.DialogInterface.OnClickListener {
-    private SimpleFileChooserListener simpleFileChooserListener;
-    private String rootPath, currentPath;
-    private ArrayList<String> dirs;
-    private ArrayAdapter<String> adapter;
-    private ListView lvDirs;
-    private boolean showHidden = true;
+    public static final int PERMISSION_REQUEST = 573;
+
+    private SimpleFileChooserListener mSFCListener;
+    private String mRootPath, mCurrentPath;
+    private ArrayList<String> mDirs;
+    private ArrayAdapter<String> mAdapter;
+    private ListView mListViewDirs;
+    private boolean mShowHidden = true;
 
     public interface SimpleFileChooserListener {
         void onFileChosen(File file);
@@ -34,41 +44,70 @@ public class SimpleFileChooser extends DialogFragment implements android.content
         void onCancel();
     }
 
+    /**
+     * Check is read permission granted
+     */
+    public static boolean isPermissionGranted(Context context) {
+        return ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    /**
+     * Check is permission request result is OK
+     */
+    public static boolean isGrantResultOk(int[] grantResults) {
+        return grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
+    }
+
+    /**
+     * Request read permission (need since API 23)
+     *
+     * @param activity
+     * Root activity
+     */
+    public void requestPermission(Activity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.READ_EXTERNAL_STORAGE))
+                Toast.makeText(activity, R.string.no_permission, Toast.LENGTH_LONG).show();
+
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST);
+        }
+    }
+
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        currentPath = rootPath = rootPath == null ? Environment.getExternalStorageDirectory().getAbsolutePath() : rootPath;
+        mCurrentPath = mRootPath = mRootPath == null ? Environment.getExternalStorageDirectory().getAbsolutePath() : mRootPath;
 
         try {
-            rootPath = new File(rootPath).getCanonicalPath();
+            mRootPath = new File(mRootPath).getCanonicalPath();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        dirs = getFilesInDirectory(rootPath);
-        adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_single_choice, dirs);
+        mDirs = getFilesInDirectory(mRootPath);
+        mAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_single_choice, mDirs);
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setSingleChoiceItems(adapter, -1, this).setPositiveButton(android.R.string.ok, this).setNegativeButton(android.R.string.cancel, this).setTitle(getDirectoryName());
+        builder.setSingleChoiceItems(mAdapter, -1, this).setPositiveButton(android.R.string.ok, this).setNegativeButton(android.R.string.cancel, this).setTitle(getDirectoryName());
 
         AlertDialog alert = builder.create();
-        lvDirs = alert.getListView();
+        mListViewDirs = alert.getListView();
 
         return alert;
     }
 
     @Override
     public void onClick(DialogInterface dialog, int which) {
-        File current = new File(currentPath);
+        File current = new File(mCurrentPath);
 
         switch (which) {
             case Dialog.BUTTON_POSITIVE:
                 if (current.isDirectory())
-                    simpleFileChooserListener.onDirectoryChosen(current);
+                    mSFCListener.onDirectoryChosen(current);
 
                 if (current.isFile())
-                    simpleFileChooserListener.onFileChosen(current);
+                    mSFCListener.onFileChosen(current);
                 break;
             case Dialog.BUTTON_NEGATIVE:
-                simpleFileChooserListener.onCancel();
+                mSFCListener.onCancel();
                 break;
             default:
                 selectFile(which);
@@ -76,11 +115,14 @@ public class SimpleFileChooser extends DialogFragment implements android.content
         }
     }
 
-    // selects new file or directory
+    /**
+     * Select new file or directory
+     */
     private void selectFile(int which) {
-        File current = new File(currentPath);
+        File current = new File(mCurrentPath);
 
         try {
+            //noinspection ResultOfMethodCallIgnored
             current.getCanonicalPath();
         } catch (IOException e) {
             e.printStackTrace();
@@ -88,16 +130,16 @@ public class SimpleFileChooser extends DialogFragment implements android.content
         }
 
         if (current.isFile())
-            currentPath = currentPath.substring(0, currentPath.lastIndexOf("/"));
+            mCurrentPath = mCurrentPath.substring(0, mCurrentPath.lastIndexOf("/"));
 
-        String selected = dirs.get(which).replace("/", "");
+        String selected = mDirs.get(which).replace("/", "");
 
         if (selected.equals("..")) {
-            currentPath = currentPath.substring(0, currentPath.lastIndexOf("/"));
+            mCurrentPath = mCurrentPath.substring(0, mCurrentPath.lastIndexOf("/"));
             refreshListView();
         } else {
-            currentPath += "/" + selected;
-            current = new File(currentPath);
+            mCurrentPath += "/" + selected;
+            current = new File(mCurrentPath);
 
             if (!current.isFile())
                 refreshListView();
@@ -107,36 +149,46 @@ public class SimpleFileChooser extends DialogFragment implements android.content
             getDialog().setTitle(getDirectoryName());
     }
 
-    // updates listview's items
+    /**
+     * Update ListView's items
+     */
     private void refreshListView() {
-        dirs.clear();
-        dirs.addAll(getFilesInDirectory(currentPath));
-        adapter.notifyDataSetChanged();
+        mDirs.clear();
+        mDirs.addAll(getFilesInDirectory(mCurrentPath));
+        mAdapter.notifyDataSetChanged();
 
-        if (!new File(currentPath).isFile())
-            for (int i = 0; i < lvDirs.getCount(); i++)
-                lvDirs.setItemChecked(i, false);
+        if (!new File(mCurrentPath).isFile())
+            for (int i = 0; i < mListViewDirs.getCount(); i++)
+                mListViewDirs.setItemChecked(i, false);
     }
 
+    /**
+     * Get readable directory name
+     */
     private String getDirectoryName() {
-        return currentPath.substring(currentPath.lastIndexOf("/"));
+        return mCurrentPath.substring(mCurrentPath.lastIndexOf("/"));
     }
 
-    // gets all files ascending in current directory
+    /**
+     * Get all files ascending in current directory
+     *
+     * @param dir
+     * Target directory
+     */
     private ArrayList<String> getFilesInDirectory(String dir) {
         ArrayList<String> dirs = new ArrayList<>();
 
         try {
             File currentDir = new File(dir);
 
-            if (!dir.equals(rootPath))
+            if (!dir.equals(mRootPath))
                 dirs.add("..");
 
             if (!currentDir.exists() || !currentDir.isDirectory())
                 return dirs;
 
             for (File file : currentDir.listFiles()) {
-                if (!showHidden && file.isHidden())
+                if (!mShowHidden && file.isHidden())
                     continue;
 
                 if (file.isDirectory())
@@ -156,19 +208,35 @@ public class SimpleFileChooser extends DialogFragment implements android.content
         return dirs;
     }
 
+    /**
+     * Set callback for file, directory or nothing selected
+     *
+     * @param sfc
+     * Listener
+     */
     public void setOnChosenListener(SimpleFileChooserListener sfc) {
-        simpleFileChooserListener = sfc;
+        mSFCListener = sfc;
     }
 
-    // show/hide hidden files/directories
-    // default = true
+    /**
+     * Show/hide hidden files/directories<br\>
+     * Default = true
+     *
+     * @param showHidden
+     * Show or not
+     */
     public void setShowHidden(boolean showHidden) {
-        this.showHidden = showHidden;
+        this.mShowHidden = showHidden;
     }
 
-    // set default root directory path
-    // default = external storage directory
+    /**
+     * Set default root directory path<br\>
+     * Default = external storage directory
+     *
+     * @param rootPath
+     * Root path
+     */
     public void setRootPath(String rootPath) {
-        this.rootPath = rootPath;
+        this.mRootPath = rootPath;
     }
 }

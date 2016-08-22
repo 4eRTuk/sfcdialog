@@ -53,4 +53,5 @@ apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.
 apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
 
 dependencies {
+    compile 'com.android.support:support-compat:24.2.0'
 }

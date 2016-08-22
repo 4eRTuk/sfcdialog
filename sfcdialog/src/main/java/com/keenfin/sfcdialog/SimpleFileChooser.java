@@ -219,7 +219,7 @@ public class SimpleFileChooser extends DialogFragment implements android.content
     }
 
     /**
-     * Show/hide hidden files/directories<br\>
+     * Show/hide hidden files/directories<br>
      * Default = true
      *
      * @param showHidden
@@ -230,7 +230,7 @@ public class SimpleFileChooser extends DialogFragment implements android.content
     }
 
     /**
-     * Set default root directory path<br\>
+     * Set default root directory path<br>
      * Default = external storage directory
      *
      * @param rootPath
